@@ -92,48 +92,50 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    """
-Start with a frontier that contains the initial state.
-Start with an empty explored set.
-Repeat:
-If the frontier is empty, then no solution.
-Remove a node from the frontier.
-If Depth First Search, take last node (frontier is a stack)
-If Breadth First Search, take first node (frontier is a queue).
-If GBFS, take node with best heuristic.
-If A*, take node with best heuristic and lowest cost.
-If node contains goal state, return the solution.
-Add node to explored set.
-Expand node, add resulting nodes to the frontier if not already in frontier and/or explored set.
-    """
-
     # Start with a frontier that contains the initial state.  State is simply a movie id.
-    # The frontier should start with all movies that source actor was in.
+    # The frontier will start with all the movies that source actor was in.
+    # We will use the actor_id as the action.
     frontier = QueueFrontier()
-    print(f"The source actor is {people[source]['name']} with id {source}.")
-    print()
-    for this_actors_movie in people[source]['movies']:
-        print(f"Adding movie {this_actors_movie} to frontier.")
-        print(movies[this_actors_movie]["title"])
-        frontier.add(Node(this_actors_movie, None, None))
+    actor_id = source
+    # print(f"\nThe source actor is {people[actor_id]['name']} with id {actor_id}.\n")
+    for movie_id in people[actor_id]['movies']:
+        #print(f'Adding movie {movies[movie_id]["title"]} with id {movie_id} to frontier.')
+        frontier.add(Node(movie_id, None, actor_id))
 
+    # Create empty explored nodes.
     explored_nodes = StackFrontier()
 
-    while False:
+    # Start searching
+    while True:
+        # Is the frontier empty?
         if frontier.empty():
             print("Frontier empty, no solution found.")
             return None
-        this_node = frontier.remove()
-        this_movie_id = this_node.state
-        # Was the goal in the movie?
-        #if target in movies[this_movie_id]['stars']:
-        #    in movie== node.state for node in )
-        #if explored_nodes.contains_state(this_node.state):
 
+        # Get a node from the frontier
+        node = frontier.remove()
+        movie_id = node.state
 
-    # TODO
-    raise NotImplementedError
+        # Did we reach the goal?  (Is the target in this movie's list of stars?)
+        if target in movies[movie_id]['stars']:
+            # Yes!  Create the return list.
+            path = [(node.state, target)]
+            while node.parent:
+                path.append((node.parent.state, node.action))
+                node = node.parent
+            path.reverse()
+            return path
 
+        # Add current_node to explored nodes
+        explored_nodes.add(node)
+
+        # Expand the current node
+        for actor_id in movies[movie_id]['stars']:
+            for movie_id in people[actor_id]['movies']:
+                new_node = Node(movie_id, node, actor_id)
+                if not (frontier.contains_state(new_node.state) or explored_nodes.contains_state(new_node.state)):
+                    #print(f'Adding movie {movies[movie_id]["title"]} with id {movie_id} to frontier.')
+                    frontier.add(new_node)
 
 def person_id_for_name(name):
     """
