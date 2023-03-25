@@ -92,6 +92,45 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
+    """
+Start with a frontier that contains the initial state.
+Start with an empty explored set.
+Repeat:
+If the frontier is empty, then no solution.
+Remove a node from the frontier.
+If Depth First Search, take last node (frontier is a stack)
+If Breadth First Search, take first node (frontier is a queue).
+If GBFS, take node with best heuristic.
+If A*, take node with best heuristic and lowest cost.
+If node contains goal state, return the solution.
+Add node to explored set.
+Expand node, add resulting nodes to the frontier if not already in frontier and/or explored set.
+    """
+
+    # Start with a frontier that contains the initial state.  State is simply a movie id.
+    # The frontier should start with all movies that source actor was in.
+    frontier = QueueFrontier()
+    print(f"The source actor is {people[source]['name']} with id {source}.")
+    print()
+    for this_actors_movie in people[source]['movies']:
+        print(f"Adding movie {this_actors_movie} to frontier.")
+        print(movies[this_actors_movie]["title"])
+        frontier.add(Node(this_actors_movie, None, None))
+
+    explored_nodes = StackFrontier()
+
+    while False:
+        if frontier.empty():
+            print("Frontier empty, no solution found.")
+            return None
+        this_node = frontier.remove()
+        this_movie_id = this_node.state
+        # Was the goal in the movie?
+        #if target in movies[this_movie_id]['stars']:
+        #    in movie== node.state for node in )
+        #if explored_nodes.contains_state(this_node.state):
+
+
     # TODO
     raise NotImplementedError
 
